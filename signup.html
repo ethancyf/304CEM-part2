@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+    <html lang = "en">
+<head>
+<meta charset="utf-8">
+<title>Color Picker</title>
+	<link rel="stylesheet" type="text/css" href="signup.css">
+</head>
+	 <script type = "text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+	    <script type = "text/javascript" >
+	$(document).ready(function(){
+
+		$("#signupbtn").click(function(){
+			var loginname=$("#loginname").val();
+			var password=$("#password").val();
+			var passwordagain=$("#passwordagain").val();
+			if(loginname!="" & password!="" & passwordagain!=""){
+			if(password==passwordagain){
+			var mydata="loginname="+ $("#loginname").val()+"&password="+$("#password").val();
+			$.ajax({
+				type: 'POST',
+				url: 'http://127.0.0.1:9999/signup',
+				dataType:"text",
+				data:mydata,
+				success: function(data) {
+					localStorage.setItem("user",loginname);
+					location.href="/index.html";	
+					alert(data);    
+				},
+				error: function(xhr, status, error) {
+		
+				}
+			});
+			}else{
+			alert("password is not the same");
+			}
+			}else{
+			alert("Please enter the email and password");
+			}
+		});
+	});
+</script> 
+<body marginwidth="10%">
+	<div class="header">Color Picker</div>
+	<div class="title">Sign Up</div>
+	<div class="signup">Already have a Color account? <a href="/index.html">Log In</a></div>
+	<div class="main">
+		<ul>
+  <li><div class="login">
+		
+				<input type="email" id="loginname" placeholder="User Name"><br>
+				<input type="password" id="password" placeholder="Password"><br>
+				<input type="password" id="passwordagain" placeholder="Enter your password again">
+		
+			<div><button class="signupbtn" id="signupbtn">Sign Up</button></div>
+		</div></li>
+		<li><div class="divider"></div></li>
+		<li><div class="otherlogin"></div></li></ul>
+	</div>
+</body>
+
+
+
+</html>

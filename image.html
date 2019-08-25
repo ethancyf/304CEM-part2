@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Color Picker</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1"><!--熒幕-->
+		<link href="bootstrap.css" rel="stylesheet" type="text/css"><!-- bootstrap -->
+		<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css"><!--body font-->
+		<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css"><!--menu font-->
+		<link href="image.css" rel="stylesheet" type="text/css"><!--main css -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.10.2/js/all.js"></script>
+		
+	</head>
+	<body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50">	
+		<!--	//////////////////MENU//////////////////////-->
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#myPage">Logo</a>
+				</div>
+				<div class="collapse navbar-collapse" id="myNavbar">
+				<!--	//////////////////MENU-MORE//////////////////////-->
+			<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#myPage">Logo</a>
+				</div>
+				<div class="collapse navbar-collapse" id="myNavbar">
+				<!--	//////////////////MENU-MORE//////////////////////-->
+					<ul class="nav navbar-nav navbar-right" id="menumore">
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="menutext">User<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="/changepassword.html">Change Password</a></li>
+								<li  id="export" data-toggle="modal"  data-target="#Export"><a href="#Export">Export</a></li>
+								<li id="menulogout"><a href="#Logout">Logout</a></li> 
+							</ul>
+						</li>
+					</ul>
+			<!--	//////////////////MENU-MAIN//////////////////////-->
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a href="/index.html">HOME</a>
+						</li>
+						<li>
+							<a href="#theory">COLOR THEORY</a>
+						</li>
+						<li>
+							<a href="/imagecolor.html">IMAGE COLOR</a>
+						</li>
+						<li>
+							<a href="/myfav.html">COLOR PETTELLE</a>
+						</li>
+						<li>
+							"　　　　　"
+						</li>
+						<li id="menulogin" data-toggle="modal"  data-target="#Login">
+							<a href="#Login">LOGIN</a>
+						</li>
+
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<div class="container text-center">
+			<table class="titlebanner">
+				<tr>
+					<th colspan="2">
+						<h7>Color Pettelle</h7>
+					</th>
+				</tr>
+				<tr>
+					<th>
+						<div class="divider"></div>
+					</th>
+					<th>
+						<h5>01</h5><br>
+						 <h6>Color Pettelle</h6>
+					</th>
+				</tr>
+			</table>
+		</div>	
+		<div class="bg-1">
+			<div class="container">
+			
+				<input type="text" id="url" placeholder="url">
+				<button type="button" class="btn btn-block" id="image"><i class="fas fa-unlock-alt"></i> Submit</button>
+				
+				
+				
+				
+			</div>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script type="text/javascript">
+		
+			$( document ).ready(function() {
+				///////////////////checkLocalStorage//////////////////
+				checkLocalStorage();
+				///////////////////checkLocalStorageFunction//////////////////
+				function checkLocalStorage(){
+					if(localStorage.getItem("user") != null){
+						document.getElementById("menulogin").style = "display:none";
+						document.getElementById("menumore").style = "";
+						document.getElementById("menulogout").style = "";
+						var localuser = localStorage.getItem('user')
+						document.getElementById('menutext').innerHTML = 'Welcome '+ localuser + '<span class="caret"></span>' ;
+					}else{
+						document.getElementById("menulogin").style = "";
+						document.getElementById("menumore").style = "display:none";
+						document.getElementById("menulogout").style = "display:none";
+					}
+				}
+			});
+				/////////////////////////////////////////
+				$("#image").click(function(){
+					
+					var mydata = document.getElementById("url").value;
+					alert(mydata);
+					$.ajax({
+						type: 'POST',
+						url: 'http://apicloud-colortag.p.mashape.com/tag-file.json',
+						dataType:"json",
+						data:mydata,
+						success: function(data) {	
+							alert(data);
+						
+						}
+					});
+				});
+	
+				
+			/////////////////////Save fav function///////////////////
+			function saveFunction(clicked_id){
+				var localuser = localStorage.getItem("user");
+				if (localuser != null){
+					var mydata = "loginname:" + localuser + "&" + "colorset:" + colorset[clicked_id];
+					$.ajax({
+						type: 'POST',
+						url: 'http://127.0.0.1:9999/insertfav',
+						dataType:"text",
+						data:mydata,
+						success: function(data) {
+							$.ajax({
+					type: 'POST',
+					url: 'http://127.0.0.1:9999/getuserfav',
+					dataType:"json",
+					data:mydata,
+					success: function(data) {	
+						
+					}
+				});
+							
+						}
+					});
+				}else{
+					alert("Please Login");
+					
+				}
+			}
+			
+			
+			
+		
+			
+		///////////////////////Login/////////////////////////	
+			$("#loginbtn").click(function(){
+			var loginname=$("#loginname").val();
+			var password=$("#password").val();
+			if(loginname!="" & password!=""){
+			var mydata="loginname="+loginname+"&password="+password;
+			$.ajax({
+				type: 'POST',
+			url: 'http://127.0.0.1:9999/login',
+			dataType:"text",
+			data:mydata,
+				success: function(data) { 
+				if (data = "successs"){
+				alert(data);
+						document.getElementById("menulogin").style = "display:none";
+						document.getElementById("menulogout").style = "";
+						localStorage.setItem("user",loginname);
+						alert("Login Success");
+					} else {
+					alert("Login Fail")};	
+				},error: function(xhr, status, error) {}
+			});
+			}else{				
+			alert("Please enter the email and password");
+			}
+			});
+				//////////////////logout//////////////////
+				$("#menulogout").click(function(){
+					document.getElementById("menulogin").style = "";
+					document.getElementById("menulogout").style = "display:none";
+					localStorage.clear();
+				});
+</script>
+		
+		
+	<div class="modal fade" id="Login" role="dialog">
+		<div class="modal-dialog">
+			<!-- /////////////////////Modal content//////////////////// -->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4><i class="fas fa-sign-in-alt"></i> Login</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form">
+						<div class="form-group">
+							<label for="text"><i class="fas fa-user"></i> Login name</label>
+							<input type="email" class="form-control" id="loginname" placeholder="Enter email">
+						</div>
+						<div class="form-group">
+							<label for="text"><i class="fas fa-key"></i> Password</label>
+							<input type="password" class="form-control" id="password" placeholder="Enter password">
+						</div>
+						<button type="button" class="btn btn-block" id="loginbtn"><i class="fas fa-unlock-alt"></i> Submit</button>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">
+						<i class="fas fa-ban"></i> Cancel</button>
+					<p>No account yet?　<a href="/signup">Sign up</a></p>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</body>
+</html>
+
+
+
+
+ 

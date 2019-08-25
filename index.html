@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Color Picker</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="bootstrap.css" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+		<link href="index.css" rel="stylesheet" type="text/css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.10.2/js/all.js"></script>
+
+	</head>
+	<body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50" onkeydown="keyLogin()">
+		<!--	//////////////////MENU//////////////////////-->
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#myPage">Color Picker</a>
+				</div>
+				<div class="collapse navbar-collapse" id="myNavbar">
+				<!--	//////////////////MENU-MORE//////////////////////-->
+					<ul class="nav navbar-nav navbar-right" id="menumore">
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="menutext">User<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="/changepassword.html">Change Password</a></li>
+								<li  id="export" data-toggle="modal"  data-target="#Export"><a href="#Export">Export</a></li>
+								<li id="menulogout"><a href="#Logout">Logout</a></li> 
+							</ul>
+						</li>
+					</ul>
+			<!--	//////////////////MENU-MAIN//////////////////////-->
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a href="/index.html">HOME</a>
+						</li>
+						<li>
+							<a href="#theory">COLOR THEORY</a>
+						</li>
+						<li>
+							<a href="/myfav.html">COLOR PETTELLE</a>
+						</li>
+						<li>
+							"　　　　　"
+						</li>
+						<li id="menulogin" data-toggle="modal"  data-target="#Login">
+							<a href="#Login">LOGIN</a>
+						</li>
+
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<script language="JavaScript">
+			$(document).ready(function(){
+			/////////////////////Block Scrolling/////////////////
+				document.documentElement.addEventListener('keydown', function (e) {
+					if ( ( e.keycode || e.which ) == 32) {
+						e.preventDefault();
+					}
+				}, false);
+				///////////////////checkLocalStorage//////////////////
+				checkLocalStorage();
+				///////////////////checkLocalStorageFunction//////////////////
+				function checkLocalStorage(){
+					if(localStorage.getItem("user") != null){
+						document.getElementById("menulogin").style = "display:none";
+						document.getElementById("menumore").style = "";
+						document.getElementById("menulogout").style = "";
+						var localuser = localStorage.getItem('user')
+						document.getElementById('menutext').innerHTML = 'Welcome, '+ localuser + '<span class="caret"></span>' ;
+					}else{
+						document.getElementById("menulogin").style = "";
+						document.getElementById("menumore").style = "display:none";
+						document.getElementById("menulogout").style = "display:none";
+					}
+				}
+				////////////////////// Logo fade in/out ////////////////////////
+				$("#logo").fadeOut(1);
+				$("#logo").fadeIn(500);
+			    $("#logotext").fadeOut(1);
+				$("#logotext").fadeIn(1000);
+			    $("#spacebar").fadeOut(1);
+				$("#colortext").fadeOut(1);
+				for(var i = 0; i<1000 ; i++){
+				$("#spacebar").fadeIn(1000);
+				$("#spacebar").fadeOut(1000);
+				}
+						///////////////////////Login///////////////	
+			$("#loginbtn").click(function(){
+			var loginname=$("#loginname").val();
+			var password=$("#password").val();
+			if(loginname!="" & password!=""){
+			var mydata="loginname="+loginname+"&password="+password;
+			$.ajax({
+				type: 'POST',
+			url: 'http://127.0.0.1:9999/login',
+			dataType:"text",
+			data:mydata,
+				success: function(data) { 
+				if (data == "success"){
+						document.getElementById("menulogin").style = "display:none";
+						document.getElementById("menulogout").style = "";
+						localStorage.setItem("user",loginname);
+						location.href="/index.html";	
+						alert("Login Success");
+					} else {	
+						alert("Login Fail");
+				}
+			}
+			});
+			}else{				
+			alert("Please enter the email and password");
+			}
+			});
+			});
+
+				//////////////////logout//////////////////
+				$("#menulogout").click(function(){
+					document.getElementById("menulogin").style = "";
+					document.getElementById("menumore").style = "display:none";
+					document.getElementById("menulogout").style = "display:none";
+					localStorage.clear();
+				});
+				//////////////////////END///////////////////////
+
+			
+
+			///////////////radom change color mathods////////////////
+			var colorset;
+			function keyLogin(){
+				$(".logobox").fadeOut(500);
+				$("#colortext").fadeIn(500);
+				if (event.keyCode==32){
+				
+				  $.ajax({
+					url: 'http://www.thecolorapi.com/scheme?hsl='+random_bg_color0()+'&mode='+random_mode()+'&count=5&format=json',
+					dataType: "jsonp",
+					jsonp: "callback",
+					jsonpCallback: "localHandler",
+					success: function (data) {
+					document.getElementById("color0").style.backgroundColor = data.colors[0].hex.value;
+					document.getElementById("color1").style.backgroundColor = data.colors[1].hex.value;
+					document.getElementById("color2").style.backgroundColor = data.colors[2].hex.value;
+					document.getElementById("color3").style.backgroundColor = data.colors[3].hex.value;
+					document.getElementById("color4").style.backgroundColor = data.colors[4].hex.value;
+					$("#method").text(data.mode);
+					$("#hexcolor0").text(data.colors[0].hex.value);
+					$("#hexcolor1").text(data.colors[1].hex.value);
+					$("#hexcolor2").text(data.colors[2].hex.value);
+					$("#hexcolor3").text(data.colors[3].hex.value);
+					$("#hexcolor4").text(data.colors[4].hex.value);
+						colorset = data.colors[0].hex.value+","+data.colors[1].hex.value+","+data.colors[2].hex.value+","+data.colors[3].hex.value+","+data.colors[4].hex.value
+					}
+				})  
+				
+			
+				}
+			}
+		</script>
+	</head>
+		<div class="header">
+			<!-- Logo start -->
+			<div class="logobox">
+				<div id="logo" align="center"><img src="Material\index\logo.png" alt="Logo" ></div>
+				<br>
+				<div id="logotext" align="center"><img src="Material\index\logotitle2.png" alt="Logo Title"></div>
+				<br><br><br><br><br><br>
+				<div id="spacebar" align="center"><h6>-Press Spacebar To Find Your Color-</h6></div>
+			</div>
+			<!-- Logo end -->
+			<!-- 5 color start -->
+			<table class="colortable" id="colorcode">
+				<tr>
+					<th>
+						<div class="color" id="color0" data-index="3" style="background: white;"></div>
+					</th>
+					<th>
+						<div class="color" id="color1" data-index="3" style="background: white;"></div>
+					</th>
+					<th>
+						<div class="color" id="color2" data-index="3" style="background: white;"></div>
+					</th>
+					<th>
+						<div class="color" id="color3" data-index="3" style="background: white;"></div>
+					</th>
+					<th>
+						<div class="color" id="color4" data-index="3" style="background: white;"></div>
+					</th>
+				</tr>
+			</table>
+			<!-- 5 color end -->
+			<!-- Color Bar start -->
+			<table class="colortable" id="colortext" >
+				<!-- Method Name -->
+				<tr>
+					<th id="method" align="center" colspan="5"></th>
+				</tr>
+				<!-- HEX Code -->
+				<tr>
+					<th class="HEX" id="hexcolor0"></th>
+					<th class="HEX" id="hexcolor1"></th>
+					<th class="HEX" id="hexcolor2"></th>
+					<th class="HEX" id="hexcolor3"></th>
+					<th class="HEX" id="hexcolor4"></th>
+				</tr>
+				<tr>
+					<th class="RGB" id="rgbcolor0"></th>
+					<th class="RGB" id="rgbcolor1"></th>
+					<th class="RGB" id="rgbcolor2"></th>
+					<th class="RGB" id="rgbcolor3"></th>
+					<th class="RGB" id="rgbcolor4"></th>
+				</tr>
+				<!-- HSL Code -->
+				<tr>
+					<th class="HSL" id="hslcolor0"></th>
+					<th class="HSL" id="hslcolor1"></th>
+					<th class="HSL" id="hslcolor2"></th>
+					<th class="HSL" id="hslcolor3"></th>
+					<th class="HSL" id="hslcolor4"></th>
+				</tr>
+				<tr>
+				<button type="button" class="btn btn-block" id="savecolorbtn">Save Color<span class="glyphicon glyphicon-ok"></span></button>
+				</tr>
+			</table>
+			<!-- Color Bar end -->
+			
+
+		</div>
+		
+		<script type="text/javascript">
+					function random_bg_color0() {  //random隨機
+    			var h = Math.floor(Math.random() * 360);
+    			var s = Math.floor(Math.random() * 80-10)+30;
+				var l = Math.floor(Math.random() * 80-10)+30;
+    			var hsl =  h + "," + s + "%," + l + "%";
+ 				return hsl;
+		}
+		
+		
+				
+		function random_mode() {
+		var randomnum = Math.floor(Math.random() * 8);
+					switch(randomnum){
+						case 0:
+							var mode = "monochrome";
+							return mode;
+							break;
+						case 1:
+							var mode = "monochrome-dark";
+							return mode;
+							break;
+						case 2:
+							var mode = "monochrome-light";
+							return mode;
+							break;
+						case 3:
+							var mode = "analogic";
+							return mode;
+							break;
+						case 4:
+							var mode = "complement";
+							return mode;
+							break;
+						case 5:
+							var mode = "analogic-complement"; 
+							return mode;
+							break;
+						case 6:
+							var mode = "triad";
+							return mode;
+							break;
+						case 7:
+							var mode = "quad"; 
+							return mode;
+							break;
+									}
+									}
+			
+		/////////////////////Save fav function///////////////////
+			$("#savecolorbtn").click(function(){
+				var localuser = localStorage.getItem("user");
+				if (localuser != null){
+				
+					var mydata = "loginname:" + localuser + "&" + "colorset:" + colorset;
+					$.ajax({
+						type: 'POST',
+						url: 'http://127.0.0.1:9999/insertfav',
+						dataType:"text",
+						data:mydata,
+						success: function(data) {
+							if(data == "saved"){
+								alert("saved");
+							}
+						}
+					});
+	
+				}else{
+					alert("Please Login");	
+				}
+			});
+			/////////////////////Export Color////////////////////
+			$("#export").click(function(){
+				var localuser = localStorage.getItem("user");
+					var mydata = "loginname:" + localuser;
+					$.ajax({
+					type: 'POST',
+					url: 'http://127.0.0.1:9999/getuserfav',
+					dataType:"json",
+					data:mydata,
+					success: function(data) {
+						var myobj = JSON.stringify(data);
+
+							$.ajax({
+								url: "https://api.myjson.com/bins",
+								type: "POST",
+								data: myobj,
+								contentType: "application/json; charset=utf-8",
+								dataType: "json",
+								success: function (data, textStatus, jqXHR) {
+									var json = JSON.stringify(data);
+									var url = json.substring(8,json.length - 2);
+									$("#url").val(url);
+								}
+							});
+						
+						
+						
+					}
+				});
+			});
+		
+  </script>	
+	
+	
+		<!-- ///////////////////Image///////////////////// -->
+		<img src="Material\index\banner.jpg" class="img-responsive" style="width:100%">	
+			<!-- ///////////////////Tiitle///////////////////// -->
+		<div class="bg-1">
+			<div class="container">
+				<h5 class="text-left">try to learn...</h5>
+				<h3 class="text-center" style="color:orange;" >Basic Color Theory</h3>
+			</div>
+		</div>
+		<!-- /////////////////////// Container (The theory Section) //////////////////////-->
+		<div id="theory" class="container text-left">
+			<img src="Material\index\html-color-codes-color-wheel-complementary-8a2cae80.png" height="250">
+			<img src="Material\index\html-color-codes-color-wheels-complementary-f8379f59.png" height="250">
+			<h6>Complementary colors</h6>
+			<p>Colors that are directly opposite one another on the color wheel are known as complementary colors. Complementary colors have a high contrast and can be very effective as accent colors when paired with a more neutral palette.</p>
+			<img src="Material\index\html-color-codes-color-wheel-triadic-bd73abc7.png" height="250">
+			<img src="Material\index\html-color-codes-color-wheels-triadic-f2238b53.png" height="250">
+			<h6>Triadic colors</h6>
+			<p>Triadic harmonies consist of three colors equidistant from one another on the color wheel. Like complementary colors, triadic schemes tend to be very bright with a high contrast and work best when one color dominates. </p>
+			<img src="Material\index\html-color-codes-color-wheel-tetradic-b1ebdc49.png" height="250">
+			<img src="Material\index\html-color-codes-color-wheels-tetradic-fd6bc86b.png" height="250">
+			<h6>Tetradic colors</h6>
+			<p>Tetradic color harmonies are formed by two sets of complementary colors 60 degrees apart on the color wheel. Tetradic schemes are an excellent starting point for creating color palettes; fine tune them using color shades, tints and tones. </p>
+			<img src="Material\index\html-color-codes-color-wheel-analogous-920e8f13.png" height="250">
+			<img src="Material\index\html-color-codes-color-wheels-analogous-c5bdfb35.png" height="250">
+			<h6>Analogous colors</h6>
+			<p>Analogous harmonies are created by selecting the colors directly adjacent to a chosen color. Frequently found in web design, analogous schemes, when paired with a complementary color for contrast, can offer great versatility.  </p>
+			<img src="Material\index\html-color-codes-color-wheel-analogous-920e8f13.png" height="250">
+			<img src="Material\index\html-color-codes-color-wheels-analogous-c5bdfb35.png" height="250">
+			<h6>Neutral colors</h6>
+			<p>Neutral schemes, like analogous harmonies, are formed by taking the colors on either side of a chosen color but at half the distance. While analogous schemes typically use colors 30 degrees apart, neutral harmonies use colors 15 degrees apart. </p>
+		</div>
+
+		<!--/////////////////Login Form//////////////////////-->
+	<div class="modal fade" id="Login" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4><i class="fas fa-sign-in-alt"></i> Login</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form">
+						<div class="form-group">
+							<label for="text"><i class="fas fa-user"></i> Login name</label>
+							<input type="email" class="form-control" id="loginname" placeholder="Enter email">
+						</div>
+						<div class="form-group">
+							<label for="text"><i class="fas fa-key"></i> Password</label>
+							<input type="password" class="form-control" id="password" placeholder="Enter password">
+						</div>
+						<button type="button" class="btn btn-block" id="loginbtn"><i class="fas fa-unlock-alt"></i> Submit</button>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">
+						<i class="fas fa-ban"></i> Cancel</button>
+					<p>No account yet?　<a href="/signup">Sign up</a></p>
+				</div>
+			</div>
+		</div>
+	</div>
+		<!--/////////////////Export Form//////////////////////-->
+		<div class="modal fade" id="Export" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4><i class="fas fa-file-export"></i> Export</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form">
+						<div class="form-group">
+							<label for="text">Export your favorite color by JSON</label>
+						</div>
+						<div class="form-group">
+							<label for="text">Request Method: GET</label>
+						</div>
+
+						<button type="button" class="btn btn-block" id="export"><i class="fas fa-unlock-alt"></i> Export</button>
+						<div class="form-group">
+							<label for="text"><i class="fas fa-link"></i> URL:</label>
+							<input type="url" class="form-control" id="url" placeholder="URL">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">
+						<i class="fas fa-ban"></i> Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
